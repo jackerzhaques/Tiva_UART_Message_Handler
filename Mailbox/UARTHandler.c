@@ -89,9 +89,9 @@ void InitializeUARTHandler(void){
 
 
     //Configure UART for interrupts
-    UARTFIFODisable(UART0_BASE);    //Generates an interrupt on every receive byte
+    //UARTFIFODisable(UART0_BASE);    //Generates an interrupt on every receive byte
     UARTIntRegister(UART0_BASE, UART_ISR);
-    UARTIntEnable(UART0_BASE, UART_INT_TX | UART_INT_RX);
+    UARTIntEnable(UART0_BASE, UART_INT_TX | UART_INT_RX | UART_INT_RT);
     UARTTxIntModeSet(UART0_BASE, UART_TXINT_MODE_EOT);  //Generate an interrupt after all bytes transmitted
 }
 
@@ -129,7 +129,7 @@ void UART_ISR(void){
         UARTIntEnable(UART0_BASE, UART_INT_TX);
     }
 
-    if(UARTIntStatus(UART0_BASE, true) & UART_INT_RX){
+    if(UARTIntStatus(UART0_BASE, true) & (UART_INT_RX | UART_INT_RT)){
         UARTIntDisable(UART0_BASE, UART_INT_RX);
 
         //Collect all bytes available
