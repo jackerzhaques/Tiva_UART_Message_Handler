@@ -14,7 +14,7 @@
 #define BUFFER_SIZE     40      //Ideally 2.5x max message data length
 
 void InitializeUARTHandler(void);
-uint32_t AddBytesToBuffer(char *bytes, uint32_t nBytes);
+uint32_t AddBytesToBuffer(uint8_t *bytes, uint32_t nBytes);
 bool MessageAvailable(void);
 Message ParseMessage(void);
 

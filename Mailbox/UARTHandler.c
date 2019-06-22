@@ -19,7 +19,7 @@
 
 //Type declarations
 typedef struct Buffer_tag{
-    char data[BUFFER_SIZE];
+    uint8_t data[BUFFER_SIZE];
     uint32_t start;
     uint32_t current;
 } Buffer;
@@ -31,13 +31,13 @@ static Buffer IncomingBuffer;
 
 
 //Function Prototypes
-bool AddByteToBuffer(Buffer* buffer, char byte);
+bool AddByteToBuffer(Buffer* buffer, uint8_t byte);
 void UART_ISR(void);
 void TransmitBuffer(void);
 bool BufferFull(Buffer *buffer);
 bool BufferEmpty(Buffer *buffer);
-char GetNextByte(Buffer* buffer);
-bool Peak(Buffer* buffer, char c);
+uint8_t GetNextByte(Buffer* buffer);
+bool Peak(Buffer* buffer, uint8_t c);
 
 void InitializeUARTHandler(void){
     //Initialize buffers
@@ -98,7 +98,7 @@ void InitializeUARTHandler(void){
 bool BufferFull(Buffer *buffer){
     bool isFull = false;
 
-    if(INCREMENT_INDEX(buffer->start) == buffer->current){
+    if(INCREMENT_INDEX(buffer->current) == buffer->start){
         isFull = true;
     }
     else{
@@ -145,7 +145,7 @@ void UART_ISR(void){
 }
 
 
-bool AddByteToBuffer(Buffer* buffer, char byte){
+bool AddByteToBuffer(Buffer* buffer, uint8_t byte){
     bool bufferHasRoom = false;
 
     if(INCREMENT_INDEX(buffer->current) != buffer->start){
@@ -160,7 +160,7 @@ bool AddByteToBuffer(Buffer* buffer, char byte){
     return bufferHasRoom;
 }
 
-uint32_t AddBytesToBuffer(char *bytes, uint32_t nBytes){
+uint32_t AddBytesToBuffer(uint8_t *bytes, uint32_t nBytes){
     uint32_t i = 0;
     bool bufferHasRoom = false;
 
@@ -194,8 +194,8 @@ void TransmitBuffer(void){
     }
 }
 
-char GetNextByte(Buffer* buffer){
-    char byte = 0x00;
+uint8_t GetNextByte(Buffer* buffer){
+    uint8_t byte = 0x00;
 
     if(buffer->start != buffer->current){
         byte = buffer->data[buffer->start];
@@ -205,7 +205,7 @@ char GetNextByte(Buffer* buffer){
     return byte;
 }
 
-bool Peak(Buffer* buffer, char c){
+bool Peak(Buffer* buffer, uint8_t c){
     bool charFound = false;
     uint32_t start = buffer->start;
 
@@ -241,7 +241,7 @@ bool MessageAvailable(void){
             }
             else{
                 //Message is corrupt, discard it
-                char c = 0x00;
+                uint8_t c = 0x00;
                 while(c != MESSAGE_END_BYTE){
                     c = GetNextByte(&IncomingBuffer);
                 }
@@ -273,10 +273,10 @@ Message ParseMessage(void){
         GetNextByte(&IncomingBuffer);
 
         //Read the ID into a buffer and convert to an integer
-        char IDBuffer[5];
+        uint8_t IDBuffer[5];
         memset(IDBuffer, 0, 5);
 
-        char nextByte = GetNextByte(&IncomingBuffer);
+        uint8_t nextByte = GetNextByte(&IncomingBuffer);
         uint8_t i = 0;
         do{
             IDBuffer[i] = nextByte;
@@ -284,18 +284,36 @@ Message ParseMessage(void){
             nextByte = GetNextByte(&IncomingBuffer);
         }
         while(nextByte != MESSAGE_ID_END_BYTE);
-        m.ID = strtol(IDBuffer, 0, 10);
+        m.ID = strtol((char*)IDBuffer, 0, 10);
 
         //Read the bytes until the end into the messages data
-
-        i = 0;
+        bool processingFinished = false;
+        uint8_t DataIndex = 0;
+        uint8_t ConvIndex = 0;
         nextByte = GetNextByte(&IncomingBuffer);
+        uint8_t ASCII_Byte[4];  //3 chars + null termination
+        memset(ASCII_Byte, 0, 4);
         do{
-            m.data[i] = nextByte;
-            i++;
+            if(ConvIndex >= 3 || nextByte == MESSAGE_FRAMING_BYTE || nextByte == MESSAGE_END_BYTE){
+                m.data[DataIndex] = strtol((char*)ASCII_Byte, 0, 10);
+                ConvIndex = 0;
+                DataIndex++;
+                memset(ASCII_Byte, 0, 4);
+
+                if(nextByte == MESSAGE_END_BYTE){
+                    processingFinished = true;
+                }
+                else{
+                    //Do nothing
+                }
+            }
+            else{
+                ASCII_Byte[ConvIndex] = nextByte;
+                ConvIndex++;
+            }
             nextByte = GetNextByte(&IncomingBuffer);
         }
-        while(nextByte != MESSAGE_END_BYTE);
+        while(!processingFinished);
     }
 
     return m;
