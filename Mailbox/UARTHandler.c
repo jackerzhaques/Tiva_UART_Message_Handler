@@ -162,16 +162,16 @@ bool AddByteToBuffer(Buffer* buffer, uint8_t byte){
 
 uint32_t AddBytesToBuffer(uint8_t *bytes, uint32_t nBytes){
     uint32_t i = 0;
-    bool bufferHasRoom = false;
+    bool bufferHasRoom = true;
 
-    do{
+
+    while(i < nBytes && bufferHasRoom){
         bufferHasRoom = AddByteToBuffer(&OutgoingBuffer, bytes[i]);
 
         if(bufferHasRoom){
             i++;
         }
     }
-    while(i < nBytes && bufferHasRoom);
 
     TransmitBuffer();
 

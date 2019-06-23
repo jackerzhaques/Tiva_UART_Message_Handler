@@ -44,13 +44,11 @@ void SendHeartbeat(void){
     SendMessage((Message*)(&m));
 }
 
-void cb2(Message m){
-    m.ID = 10;
-    SendMessage(&m);
+void Callback_HeartbeatResponse(Message m){
 }
 
 static MessageSubscription subscriptions[] = {
-                                 {2, cb2}
+                                 {2, Callback_HeartbeatResponse}
 };
 
 static uint32_t nSubscriptions = sizeof(subscriptions)/sizeof(MessageSubscription);
