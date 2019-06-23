@@ -3,6 +3,7 @@
 #include "Mailbox/Mailbox.h"
 #include "Mailbox/UARTHandler.h"
 #include "Mailbox/MessageSubscriber.h"
+#include "Mailbox/IDCD.h"
 
 //Standard includes
 #include <stdbool.h>
@@ -38,22 +39,26 @@ void sprintfloat(char *Buffer, float val, int arg1){
     sprintf(Buffer, "%i.%i", LeftSide, RightSide);
 }
 
-void cb1(Message m){
-    m.ID = 5;
-    SendMessage(m);
+void SendHeartbeat(void){
+    HeartbeatMessage m = HEARTBEAT_MESSAGE_INIT;
+    SendMessage((Message*)(&m));
 }
 
 void cb2(Message m){
     m.ID = 10;
-    SendMessage(m);
+    SendMessage(&m);
 }
 
 static MessageSubscription subscriptions[] = {
-                                 {1, cb1},
                                  {2, cb2}
 };
 
 static uint32_t nSubscriptions = sizeof(subscriptions)/sizeof(MessageSubscription);
+
+typedef struct Messaget_tag{
+    uint16_t ID;
+    uint8_t data[8];
+} Messaget;
 
 int main(void)
 {
@@ -63,6 +68,13 @@ int main(void)
 
     InitializeMailbox();
     InitializeMessageSubscriber(subscriptions, nSubscriptions);
+
+    Task SendHeartbeatTask;
+    SendHeartbeatTask.period = 5;
+    SendHeartbeatTask.priority = 5;
+    SendHeartbeatTask.enabled = true;
+    SendHeartbeatTask.pCallback = SendHeartbeat;
+    AddTask(&SendHeartbeatTask);
 
 
     while(1){

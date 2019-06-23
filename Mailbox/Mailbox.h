@@ -12,7 +12,7 @@
 //Tivaware includes
 
 void InitializeMailbox(void);
-void SendMessage(Message m);
+void SendMessage(Message *m);
 Message* GetNextReceivedMessage(void);
 
 #endif

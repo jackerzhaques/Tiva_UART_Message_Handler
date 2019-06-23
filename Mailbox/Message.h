@@ -6,16 +6,15 @@
 
 #define MESSAGE_START_BYTE          ':'
 #define MESSAGE_ID_END_BYTE         ' '
-#define MESSAGE_END_BYTE            ';'
 #define MESSAGE_FRAMING_BYTE        ','     //Separates ascii data bytes
+#define MESSAGE_END_BYTE            ';'
 
 #include <stdint.h>
 
 typedef struct Message_tag{
-    uint16_t ID : 11;
+    uint16_t ID;
+    uint8_t DLC;
     uint8_t data[MAX_MESSAGE_DATA_LENGTH];
-
-    uint8_t reserved : 5;
 } Message;
 
 #endif
