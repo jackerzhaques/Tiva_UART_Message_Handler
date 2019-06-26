@@ -11,10 +11,17 @@
 
 #include <stdint.h>
 
+typedef struct MessageData_Tag{
+    uint8_t bytes[MAX_MESSAGE_DATA_LENGTH];
+} MessageData;
+
 typedef struct Message_tag{
     uint16_t ID;
     uint8_t DLC;
-    uint8_t data[MAX_MESSAGE_DATA_LENGTH];
+    union{
+        uint8_t data[8];
+        uint8_t *pData;
+    };
 } Message;
 
 #endif

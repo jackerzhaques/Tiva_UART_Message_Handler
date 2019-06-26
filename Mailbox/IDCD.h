@@ -35,7 +35,7 @@ typedef struct Heartbeat_Response_tag{
 
 #define SET_POSITION_ID                 3
 #define SET_POSITION_DLC                5
-#define SET_POSITION_DATA_INIT          {floatPos,Dimension}
+#define SET_POSITION_DATA_INIT          {0,0}
 #define SET_POSITION_INIT               {SET_POSITION_ID, SET_POSITION_DLC, SET_POSITION_DATA_INIT}
 
 typedef struct Set_Position_data_tag{
@@ -52,7 +52,7 @@ typedef struct Set_Position_tag{
 
 #define SET_JOINT_ANGLE_ID                 4
 #define SET_JOINT_ANGLE_DLC                5
-#define SET_JOINT_ANGLE_DATA_INIT          {floatDegrees,Joint}
+#define SET_JOINT_ANGLE_DATA_INIT          {0,0}
 #define SET_JOINT_ANGLE_INIT               {SET_JOINT_ANGLE_ID, SET_JOINT_ANGLE_DLC, SET_JOINT_ANGLE_DATA_INIT}
 
 typedef struct Set_Joint_Angle_data_tag{
@@ -85,7 +85,7 @@ typedef struct Get_Encoder_Status_tag{
 
 #define GET_ENCODER_STATUS_RESPONSE_ID                 6
 #define GET_ENCODER_STATUS_RESPONSE_DLC                1
-#define GET_ENCODER_STATUS_RESPONSE_DATA_INIT          {Joint}
+#define GET_ENCODER_STATUS_RESPONSE_DATA_INIT          {0}
 #define GET_ENCODER_STATUS_RESPONSE_INIT               {GET_ENCODER_STATUS_RESPONSE_ID, GET_ENCODER_STATUS_RESPONSE_DLC, GET_ENCODER_STATUS_RESPONSE_DATA_INIT}
 
 typedef struct Get_Encoder_Status_Response_data_tag{
@@ -101,7 +101,7 @@ typedef struct Get_Encoder_Status_Response_tag{
 
 #define GET_JOINT_CURRENT_ID                 7
 #define GET_JOINT_CURRENT_DLC                1
-#define GET_JOINT_CURRENT_DATA_INIT          {Joint}
+#define GET_JOINT_CURRENT_DATA_INIT          {0}
 #define GET_JOINT_CURRENT_INIT               {GET_JOINT_CURRENT_ID, GET_JOINT_CURRENT_DLC, GET_JOINT_CURRENT_DATA_INIT}
 
 typedef struct Get_Joint_Current_data_tag{
@@ -117,7 +117,7 @@ typedef struct Get_Joint_Current_tag{
 
 #define GET_JOINT_CURRENT_RESPONSE_ID                 8
 #define GET_JOINT_CURRENT_RESPONSE_DLC                5
-#define GET_JOINT_CURRENT_RESPONSE_DATA_INIT          {current,Joint}
+#define GET_JOINT_CURRENT_RESPONSE_DATA_INIT          {0,0}
 #define GET_JOINT_CURRENT_RESPONSE_INIT               {GET_JOINT_CURRENT_RESPONSE_ID, GET_JOINT_CURRENT_RESPONSE_DLC, GET_JOINT_CURRENT_RESPONSE_DATA_INIT}
 
 typedef struct Get_Joint_Current_Response_data_tag{
@@ -134,7 +134,7 @@ typedef struct Get_Joint_Current_Response_tag{
 
 #define GET_POSITION_ID                 9
 #define GET_POSITION_DLC                1
-#define GET_POSITION_DATA_INIT          {Dimension}
+#define GET_POSITION_DATA_INIT          {0}
 #define GET_POSITION_INIT               {GET_POSITION_ID, GET_POSITION_DLC, GET_POSITION_DATA_INIT}
 
 typedef struct Get_Position_data_tag{
@@ -150,7 +150,7 @@ typedef struct Get_Position_tag{
 
 #define GET_POSITION_RESPONSE_ID                 10
 #define GET_POSITION_RESPONSE_DLC                5
-#define GET_POSITION_RESPONSE_DATA_INIT          {Position,Dimension}
+#define GET_POSITION_RESPONSE_DATA_INIT          {0,0}
 #define GET_POSITION_RESPONSE_INIT               {GET_POSITION_RESPONSE_ID, GET_POSITION_RESPONSE_DLC, GET_POSITION_RESPONSE_DATA_INIT}
 
 typedef struct Get_Position_Response_data_tag{
@@ -167,7 +167,7 @@ typedef struct Get_Position_Response_tag{
 
 #define GET_JOINT_ANGLE_ID                 11
 #define GET_JOINT_ANGLE_DLC                1
-#define GET_JOINT_ANGLE_DATA_INIT          {Joint}
+#define GET_JOINT_ANGLE_DATA_INIT          {0}
 #define GET_JOINT_ANGLE_INIT               {GET_JOINT_ANGLE_ID, GET_JOINT_ANGLE_DLC, GET_JOINT_ANGLE_DATA_INIT}
 
 typedef struct Get_Joint_Angle_data_tag{
@@ -183,7 +183,7 @@ typedef struct Get_Joint_Angle_tag{
 
 #define GET_JOINT_ANGLE_RESPONSE_ID                 12
 #define GET_JOINT_ANGLE_RESPONSE_DLC                5
-#define GET_JOINT_ANGLE_RESPONSE_DATA_INIT          {angleBytes,Joint}
+#define GET_JOINT_ANGLE_RESPONSE_DATA_INIT          {0,0}
 #define GET_JOINT_ANGLE_RESPONSE_INIT               {GET_JOINT_ANGLE_RESPONSE_ID, GET_JOINT_ANGLE_RESPONSE_DLC, GET_JOINT_ANGLE_RESPONSE_DATA_INIT}
 
 typedef struct Get_Joint_Angle_Response_data_tag{
@@ -210,13 +210,16 @@ typedef struct Get_Control_Status_data_tag{
 typedef struct Get_Control_Status_tag{
   uint16_t ID;
   uint8_t DLC;
-  Get_Control_Status_data data;
+  union {
+      Get_Control_Status_data data;
+      Get_Control_Status_data *pData;
+  };
 } Get_Control_Status;
 
 
 #define GET_CONTROL_STATUS_RESPONSE_ID                 14
 #define GET_CONTROL_STATUS_RESPONSE_DLC                1
-#define GET_CONTROL_STATUS_RESPONSE_DATA_INIT          {status}
+#define GET_CONTROL_STATUS_RESPONSE_DATA_INIT          {0}
 #define GET_CONTROL_STATUS_RESPONSE_INIT               {GET_CONTROL_STATUS_RESPONSE_ID, GET_CONTROL_STATUS_RESPONSE_DLC, GET_CONTROL_STATUS_RESPONSE_DATA_INIT}
 
 typedef struct Get_Control_Status_Response_data_tag{

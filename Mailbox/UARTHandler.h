@@ -11,7 +11,7 @@
 //Tivaware includes
 
 //defines
-#define BUFFER_SIZE     40      //Ideally 2.5x max message data length
+#define BUFFER_SIZE     512      //Ideally 2.5x max message data length
 
 void InitializeUARTHandler(void);
 uint32_t AddBytesToBuffer(uint8_t *bytes, uint32_t nBytes);

@@ -7,6 +7,8 @@
 
 static MessageQueue IncomingMessages;
 
+static uint32_t nOverflows = 0;
+
 //Function prototypes
 
 void InitializeMailbox(void){
@@ -56,9 +58,17 @@ void SendMessage(Message *m){
     //Disable interrupts while adding bytes to buffer
     IntMasterDisable();
 
-    AddBytesToBuffer(header, strlen((char*)header));
-    AddBytesToBuffer(buffer, strlen((char*)buffer));
-    AddBytesToBuffer(end, 1);
+    uint32_t nBytesSent;
+    nBytesSent = AddBytesToBuffer(header, strlen((char*)header));
+    nBytesSent += AddBytesToBuffer(buffer, strlen((char*)buffer));
+    nBytesSent += AddBytesToBuffer(end, 1);
+
+    if(nBytesSent != strlen((char*)header) + strlen((char*)buffer) + 1){
+        //Buffer overflow has occurred
+        //Currently we are only logging this.
+        //If this number becomes too high, increase the buffer size
+        nOverflows++;
+    }
 
     IntMasterEnable();
 }
