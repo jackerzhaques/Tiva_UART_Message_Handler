@@ -40,7 +40,7 @@ void sprintfloat(char *Buffer, float val, int arg1){
 }
 
 void SendHeartbeat(void){
-    HeartbeatMessage m = HEARTBEAT_MESSAGE_INIT;
+    Heartbeat m = HEARTBEAT_INIT;
     SendMessage((Message*)(&m));
 }
 
